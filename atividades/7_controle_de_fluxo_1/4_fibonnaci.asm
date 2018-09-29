@@ -7,11 +7,18 @@
 
     main:
         addi $s0, $zero, 0
-        addi $s1, $zero, 1 #anterior
-        addi $s2, $zero, 2 #atual
+        addi $s1, $zero, 0 #anterior
+        addi $s2, $zero, 0 #atual
 
     fib:
         # condition
+        
+        ble $s0, 1, base1 # =< 1
+            
+            base1:
+                addi $s2, $s0, 0 # atual = contador 
+
+
         beq $s0, 10, exit
 
         # print sum current + previous
@@ -20,8 +27,8 @@
         syscall
 
         #
-        add $s1, $s2, $zero
-        add $s2, $s2, $s1
+        addi $s1, $s2, 0    # anterior = atual 
+        addi $s2, $a0, 0  
 
         # print ,
         li $v0, 4
@@ -31,6 +38,8 @@
         # increment
         addi $s0, $s0, 1
         j fib
+    
+    
 
     exit:
         # print END
