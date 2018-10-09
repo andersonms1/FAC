@@ -9,14 +9,14 @@
 				# code for reading integer is 5
 		syscall		# call operating system to perform operation
 		move $a1, $v0	# O SEGUNDO VALOR LIDO DO TECLADO ESTA DISPONIVEL EM $A1
-      
+		
 # =================== IMPLEMENTE AQUI SUA SOLUCAO: INICIO
-	blt		$a0, 2, exit	# if $a0 < 2 then exit
-	blt		$a1, 2, exit	# if $a1 < 2 then exit
+	ble		$a0, 0, exit	# if $a0 <= 0 then exit
+	ble		$a1, 0, exit	# if $a1 <= 0 then exit
 
 	div		$a0, $a1			# $a0 / $a1
 	mfhi	$t0					# $t1 = $a0 mod $a1 
-	add 	$t1, $t0, $zero
+	add 	$t1, $t0, $zero		
 
 	add		$t2, $a0, $zero		# $t2 = $a0 + $zero
 	add		$t3, $a1, $zero		# $t3 = $a1 + $zero
@@ -30,30 +30,16 @@
 		j while
 	
 	exit_while:
+		# mdc
+		add		$t0, $t3, $zero		# $t0 = $t3 + $zero
 		
-
-	add		$t2, $a0, $zero		# $t2 = $a0 + $zero
-	add		$t3, $a1, $zero		# $t3 = $a1 + $zero
-
-	while1:
-		bne		$t1, 0, exit_while1	# if $t0 != 0 then exit_while
-		move $t2, $t3		# $t2 = $t3
-		move $t3, $t1		# $t3 = $t1
-		div $t2, $t3		# $t2 / $t3
-		mfhi	$t1	
-		j while1
-
-	exit_while1:
-		mul $t1, $t2, $t3
-		div $t1, $t2
-		mflo $t1
-
+		# mmc
+		mul	$t1, $a0, $a1			# $t2 * $t3 = Hi and Lo registers
+		div		$t1, $t2			# $t1/ $t1
+		mflo	$t1					# $t2 = floor($t1/ $t1) 
 		
+	
 
-
-	
-	
-	
 # =================== IMPLEMENTE AQUI SUA SOLUCAO: FIM      
 
       jal  print            # call print routine. 
@@ -71,18 +57,18 @@
 	.text
 print:	
 	la   $a0, string_MDC  
-	li   $v0, 4		# specify Print String service
+	li   $v0, 4				# specify Print String service
 	syscall               	# print heading
 	move   $a0, $t0      	# 
 	li   $v0, 1           	# specify Print Integer service
 	syscall               	# print $t0
-		la   $a0, string_MMC   	# load address of print heading
-			li   $v0, 4           	# specify Print String service
-			syscall               	# print heading
-			move   $a0, $t1      	# 
-		li   $v0, 1           	# specify Print Integer service
-			syscall               	# print $t1
-		jr   $ra              	# return
+	la   $a0, string_MMC   	# load address of print heading
+	li   $v0, 4           	# specify Print String service
+	syscall               	# print heading
+	move   $a0, $t1      	# 
+	li   $v0, 1           	# specify Print Integer service
+	syscall               	# print $t1
+	jr   $ra              	# return
 
 	exit:
 		li		$v0, 4		# 
