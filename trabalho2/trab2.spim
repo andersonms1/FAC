@@ -1,0 +1,78 @@
+.data
+  new_line:	.asciiz  "\n"         # newline
+  paridade: .asciiz "bit-paridade: "
+  saida:  .asciiz "saida: "
+  numero: .word 0
+.text
+
+main:
+  li   $v0, 5
+  syscall 
+
+  add  $a0, $v0, $zero
+  add  $t2, $v0, $zero
+
+  lw	$a1, numero 			# $a1 = $a1 + 0
+
+
+  jal my_loop
+
+  jal show_ans
+
+
+  li   $v0, 10          # system call for exit
+  syscall               # we are out of here.
+
+####################################################33
+
+my_loop:
+  beq		$a0, $zero, exit_loop	# if $a0 != $zero then exit_loop
+ 
+  not   $a1, $a1
+
+  addi	$t0, $a0, -1			# $t0 = $a0 + -1
+  
+  and   $a0, $a0, $t0
+  
+  j my_loop
+
+exit_loop:
+  jr $ra
+
+show_ans:
+  
+  ############# print paridade ################
+  move 	$t1, $a0		# $t1 = $a0
+  
+  li		$v0, 4		# $v0 = 4
+  la		$a0, paridade		# 
+  syscall
+
+  move 	$a0, $a1		# $a0 = $a1
+
+  li   $v0, 1  		# specify Print String service
+	syscall 
+  li		$v0, 4		# $v0 = 4
+  la		$a0, new_line		# 
+  syscall
+
+  move 	$a0, $t1		# $a0 = $t1
+
+  ############# print saida ####################
+  move 	$t1, $a0		# $t1 = $a0
+  
+  li		$v0, 4		# $v0 = 4
+  la		$a0, saida		# 
+  syscall
+
+  move 	$a0, $t1		# $a0 = $t1
+
+  li   $v0, 1  		# specify Print String service
+	syscall 
+
+  ############## print /n #####################
+  li		$v0, 4		# $v0 = 4
+  la		$a0, new_line		# 
+  syscall
+
+  jr $ra
