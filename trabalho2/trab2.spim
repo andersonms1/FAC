@@ -3,6 +3,8 @@
   paridade: .asciiz "bit-paridade: "
   saida:  .asciiz "saida: "
   numero: .word 0
+  shift: .word 1
+  n: .byte 1
 .text
 
 main:
@@ -17,11 +19,14 @@ main:
 
   jal my_loop
 
-  jal show_ans
-
+  beq		$a1, $zero, show_ans	# if $a1 == $zero then show_ans
+  
+  jal show_odd
 
   li   $v0, 10          # system call for exit
-  syscall               # we are out of here.
+  syscall  
+
+
 
 ####################################################33
 
@@ -49,6 +54,55 @@ show_ans:
   syscall
 
   move 	$a0, $a1		# $a0 = $a1
+  
+  li   $v0, 1  		# specify Print String service
+	syscall 
+  li		$v0, 4		# $v0 = 4
+  la		$a0, new_line		# 
+  syscall
+
+  move 	$a0, $t1		# $a0 = $t1
+
+  ############# print saida ####################
+  move 	$t1, $a0		# $t1 = $a0
+  
+  li		$v0, 4		# $v0 = 4
+  la		$a0, saida		# 
+  syscall
+
+  
+  move 	$a0, $t2		# $a0 = $t2
+
+  li   $v0, 1  		# specify Print String service
+	syscall 
+
+
+  li		$v0, 4		# $v0 = 4
+  la		$a0, new_line		# 
+  syscall
+
+
+
+  li   $v0, 10          # system call for exit
+  syscall               # we are out of here.
+
+
+
+
+show_odd:
+  
+  ############# print paridade ################
+  move 	$t1, $a0		# $t1 = $a0
+  
+  li		$v0, 4		# $v0 = 4
+  la		$a0, paridade		# 
+  syscall
+
+  # move 	$a0, $a1		# $a0 = $a1
+  
+  lw $t3, shift
+
+  move $a0, $t3
 
   li   $v0, 1  		# specify Print String service
 	syscall 
@@ -65,7 +119,18 @@ show_ans:
   la		$a0, saida		# 
   syscall
 
-  move 	$a0, $t1		# $a0 = $t1
+  ##############################################
+
+  # addi $t3, $t3, 1
+  
+  lbu $t3, n
+  sll  $t2, $t2, 1
+  addiu	$t2, $t2, $t3			# $a1 = $a1 + 1
+
+
+  move $a0, $t2  
+  ##############################################
+
 
   li   $v0, 1  		# specify Print String service
 	syscall 
@@ -75,4 +140,7 @@ show_ans:
   la		$a0, new_line		# 
   syscall
 
-  jr $ra
+  li   $v0, 10          # system call for exit
+  syscall               # we are out of here.
+
+  # jr $ra
