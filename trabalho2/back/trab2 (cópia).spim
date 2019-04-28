@@ -2,7 +2,6 @@
   new_line:	.asciiz  "\n"         # newline
   paridade: .asciiz "bit-paridade: "
   saida:  .asciiz "saida: "
-  incorreto: .asciiz "entrada incorreta\n"
   numero: .word 0
   shift: .word 1
   n: .byte 1
@@ -16,11 +15,6 @@ main:
   add  $t2, $v0, $zero
 
   lw	$a1, numero 			# $a1 = $a1 + 0
-
-  addi $t5, $t5, 127
-
-  bgt		$t2, $t5, kill	# if $t2 > $t5 then kill
-  
 
 
   jal my_loop
@@ -41,7 +35,7 @@ my_loop:
  
   not   $a1, $a1
 
-  addiu	$t0, $a0, -1			# $t0 = $a0 + -1
+  addi	$t0, $a0, -1			# $t0 = $a0 + -1
   
   and   $a0, $a0, $t0
   
@@ -49,8 +43,6 @@ my_loop:
 
 exit_loop:
   jr $ra
-
-  
 
 show_ans:
   
@@ -127,28 +119,17 @@ show_odd:
   la		$a0, saida		# 
   syscall
 
-  #####################################################################################
+  ##############################################
 
   # addi $t3, $t3, 1
   
   lbu $t3, n
-  
-  
-  
-  # sll  $t2, $t2, 1
-  
-  # ori $t2, $t2, 00000000 11111111 11111111 111111111 
-  
-  # 0x00000001
+  sll  $t2, $t2, 1
+  addiu	$t2, $t2, $t3			# $a1 = $a1 + 1
 
-
-  # addu	$t2, $t2, $t3			# $a1 = $a1 + 1
-  # addi $t2, $t2, 0x00000001
-
-  addi $t2, $t2, 128
 
   move $a0, $t2  
-  #####################################################################################3
+  ##############################################
 
 
   li   $v0, 1  		# specify Print String service
@@ -163,14 +144,3 @@ show_odd:
   syscall               # we are out of here.
 
   # jr $ra
-
-
-kill:
-  
-  li		$v0, 4		# $v0 = 4
-  la		$a0, incorreto		# 
-  syscall
-
-  li   $v0, 10          # system call for exit
-  syscall               # we are out of here.
-
