@@ -1,0 +1,72 @@
+.data
+  incorreto: .asciiz "Entrada invalida.\n"
+  MAX: .word 32768
+.text
+
+  main:
+
+    li   $v0, 5 # read integer
+    syscall 
+
+    lw	$t1, MAX
+
+    bgt		$v0, $t1, kill	# if $t0 >= $t1 then target
+    ble		$t1, $zero, kill	# if $t1 <= $zero tkillrget
+    
+    li   $v0, 10          # system call for exit
+    syscall               # we are out of here.
+
+    move 	$t2, $v0		# $t2 = $v0
+    add		$t3, $t2, $zero		# $t3 = $t2 + $zero
+    addi	$t4, $zero, 2			# $t4 = $zero + 2
+    
+
+    my_loop:
+      
+      blt		$t4, $t2, kill_loop	# if $t4 < $t2 then kill_loop
+      # bgt		$t4, $t2, kill_loop	# if $t4 > $t2 then kill_loop
+      
+
+        div		$t3, $t4			# $t3 / $t4
+        
+        mflo	$s0					#  quotient 
+        mfhi	$s1					#  reminder
+
+        beq		$s1, $zero, no_reminder	# if $s1 == $zero then no_reminder
+
+        bne		$s1, $zero, has_reminder	# if $s1 != $zero then has_reminder
+          
+        
+            
+
+      j my_loop 
+
+
+    li   $v0, 10          # system call for exit
+    syscall               # we are out of here.
+
+
+  no_reminder:
+              add 	$a0, $t4, $zero		# $a0 = $a1
+              li    $v0, 1  		# specify Print String service
+              syscall 
+
+              move 	$t3, $s0		# $t3 = $s0   
+
+  has_reminder:
+            addi	$t4, $t4, 1			# $t4 = $t4 + 1
+
+
+
+  kill_loop:
+    jr $ra
+
+
+  kill:
+    # print erro message
+    li		$v0, 4		# $v0 = 4
+    la		$a0, incorreto		# 
+    syscall
+
+    li   $v0, 10          # system call for exit
+    syscall               # we are out of here.
